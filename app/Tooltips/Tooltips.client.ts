@@ -24,30 +24,26 @@ const globalOptions: Partial<TippyProps> = {
   ...userOptions,
 };
 
-for (let i = 0, len = elements.length; i < len; i++) {
-  const element = elements[i];
+  elements.forEach(element => {
 
-  const options = { ...globalOptions };
-
-  /* Extract per tooltip overrides */
-  const title = element.getAttribute('title');
-  if (typeof title === 'string') {
-    options.content = title;
+    const options = globalOptions;
+    
+    /* Extract per tooltip overrides */
+    const title = element.getAttribute('title');
+    if (typeof title === 'string') options.content = title;
+    
+    // IDEA: extraction a generic pattern for all props? `[data-tooltip-{LOCAL}]`
+    const placement = element.getAttribute('data-tooltip-placement');
+    if (typeof placement === 'string') options.placement = placement as Placement;
+    
+    /* Interactivity */
+    const interactive = element.getAttribute('data-tooltip-interactive');
+    if (typeof interactive === 'string') options.interactive = interactive === 'true';
+    
+    /* Initialize Tippy.js */
+    tippy(element, options);
+    
+    /* Delete regular title attributes which would interfere otherwise */
+    element.setAttribute('title', '');
   }
-  // IDEA: extraction a generic pattern for all props? `[data-tooltip-{LOCAL}]`
-  const placement = element.getAttribute('data-tooltip-placement');
-  if (typeof element.getAttribute('data-tooltip-placement') === 'string') {
-    options.placement = placement as Placement;
-  }
-  const interactive = element.getAttribute('data-tooltip-interactive');
-  /* Interactivity */
-  if (typeof interactive === 'string') {
-    options.interactive = interactive === 'true';
-  }
-
-  /* Initialize Tippy.js */
-  tippy(element, options);
-
-  /* Delete regular title attributes which would interfere otherwise */
-  element.setAttribute('title', '');
-}
+)
